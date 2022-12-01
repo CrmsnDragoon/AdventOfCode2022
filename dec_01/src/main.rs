@@ -1,12 +1,10 @@
-use std::string::FromUtf8Error;
-
 fn main() {
-    let input = (include_bytes!("../input/input.txt"));
+    let input = include_bytes!("../input/input.txt");
     let input_as_string = String::from_utf8_lossy(input).to_string();
-    calc_biggest_elf_kcal(input_as_string);
+    calc_elf_kcal(input_as_string.clone());
 }
 
-fn calc_biggest_elf_kcal(input_as_string: String){
+fn calc_elf_kcal(input_as_string: String){
     let mut current_elf = 0;
 
     let mut elves :Vec::<i32> = vec![];
@@ -25,5 +23,12 @@ fn calc_biggest_elf_kcal(input_as_string: String){
         }
     };
     elves.sort();
-    println!("{}", elves.last().unwrap());
+    println!("Answer 1: {}", &elves.last().unwrap());
+
+    let top_3_slice = &elves[elves.len()-3..elves.len()];
+    println!("top 3: ");
+    for x in (&top_3_slice).iter() {
+        println!("{}", x);
+    }
+    println!("Answer 2: top 3 total: {}", top_3_slice.iter().sum::<i32>());
 }
