@@ -13,7 +13,6 @@ fn calc_elf_kcal(input_as_string: String){
         let as_int :Result<i32,_> =  current_line.parse();
         if as_int.is_ok(){
             let current = as_int.unwrap();
-            println!("{}", current.clone());
             current_elf += current;
         }
         else {
