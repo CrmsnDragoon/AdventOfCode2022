@@ -17,15 +17,15 @@ fn calc_elf_kcal(input_as_string: String){
             current_elf += current;
         }
         else {
-            println!("new elf! total: {}", current_elf);
             elves.push(current_elf);
             current_elf = 0;
         }
-    };
+    }
     elves.sort();
-    println!("Answer 1: {}", &elves.last().unwrap());
+    elves.reverse();
+    println!("Answer 1: {}", &elves.first().unwrap());
 
-    let top_3_slice = &elves[elves.len()-3..elves.len()];
+    let top_3_slice = &elves[0..3];
     println!("top 3: ");
     for x in (&top_3_slice).iter() {
         println!("{}", x);
