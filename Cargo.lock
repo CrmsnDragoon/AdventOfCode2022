@@ -5,3 +5,39 @@ version = 3
 [[package]]
 name = "dec_01"
 version = "0.1.0"
+
+[[package]]
+name = "dec_02"
+version = "0.1.0"
+
+[[package]]
+name = "dec_03"
+version = "0.1.0"
+
+[[package]]
+name = "dec_04"
+version = "0.1.0"
+
+[[package]]
+name = "dec_05"
+version = "0.1.0"
+
+[[package]]
+name = "dec_06"
+version = "0.1.0"
+
+[[package]]
+name = "dec_07"
+version = "0.1.0"
+
+[[package]]
+name = "dec_08"
+version = "0.1.0"
+
+[[package]]
+name = "dec_09"
+version = "0.1.0"
+
+[[package]]
+name = "dec_10"
+version = "0.1.0"

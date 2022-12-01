@@ -1,4 +1,13 @@
 [workspace]
 members = [
-    "dec_01"
+    "dec_01",
+    "dec_02",
+    "dec_03",
+    "dec_04",
+    "dec_05",
+    "dec_06",
+    "dec_07",
+    "dec_08",
+    "dec_09",
+    "dec_10",
 ]
