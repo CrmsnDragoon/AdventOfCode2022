@@ -37,10 +37,6 @@ fn calc_elf_kcal(input_as_string: String) -> (i32, i32){
     }
     elves.sort();
     elves.reverse();
-    println!("ELVES: ");
-    elves.iter().for_each(|elf|{
-        println!("ELF: {}",elf);
-    });
 
     let answer1: i32 = elves.first().unwrap().clone();
 
