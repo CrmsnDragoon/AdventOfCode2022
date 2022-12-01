@@ -19,7 +19,7 @@ fn dec01(){
 fn calc_elf_kcal(input_as_string: String) -> (i32, i32){
     let mut current_elf = 0;
 
-    let mut elves :Vec::<i32> = vec![];
+    let mut elves :Vec<i32> = vec![];
 
     for current_line in input_as_string.lines() {
         let as_int :Result<i32,_> =  current_line.parse();
