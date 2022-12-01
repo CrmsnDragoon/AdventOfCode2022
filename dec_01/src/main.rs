@@ -1,10 +1,22 @@
 fn main() {
     let input = include_bytes!("../input/input.txt");
     let input_as_string = String::from_utf8_lossy(input).to_string();
-    calc_elf_kcal(input_as_string.clone());
+    let res = calc_elf_kcal(input_as_string.clone());
+    println!("Answer 1: {}", res.0);
+    println!("Answer 2: top 3 total: {}", res.1);
 }
 
-fn calc_elf_kcal(input_as_string: String){
+#[test]
+fn dec01(){
+    let input = include_bytes!("../input/test_input.txt");
+    let input_as_string = String::from_utf8_lossy(input).to_string();
+    let res = calc_elf_kcal(input_as_string.clone());
+    assert_eq!(res.0, 24000);
+    assert_eq!(res.1, 45000);
+}
+
+
+fn calc_elf_kcal(input_as_string: String) -> (i32, i32){
     let mut current_elf = 0;
 
     let mut elves :Vec::<i32> = vec![];
@@ -20,14 +32,19 @@ fn calc_elf_kcal(input_as_string: String){
             current_elf = 0;
         }
     }
+    if current_elf != 0{
+        elves.push(current_elf);
+    }
     elves.sort();
     elves.reverse();
-    println!("Answer 1: {}", &elves.first().unwrap());
+    println!("ELVES: ");
+    elves.iter().for_each(|elf|{
+        println!("ELF: {}",elf);
+    });
+
+    let answer1: i32 = elves.first().unwrap().clone();
 
     let top_3_slice = &elves[0..3];
-    println!("top 3: ");
-    for x in (&top_3_slice).iter() {
-        println!("{}", x);
-    }
-    println!("Answer 2: top 3 total: {}", top_3_slice.iter().sum::<i32>());
+    let answer2: i32  = top_3_slice.iter().sum::<i32>();
+    (answer1,answer2)
 }
