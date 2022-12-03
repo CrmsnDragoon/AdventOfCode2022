@@ -90,37 +90,29 @@ fn get_badges_for_authorization(input: String) -> i32 {
     let groups = input.lines().collect::<Vec<&str>>();
     let groups = groups.chunks(3).into_iter();
     println!("Groups: {}", groups.len());
-    groups /*.map(|&line| {
-            let mut splits = line.split("\n");
-            let line1 = splits.next().unwrap().to_string();
-            let line2 = splits.next().unwrap().to_string();
-            let line3 = splits.next().unwrap().to_string();
-            println!("Line Group: \n\t{}\n\t{}\n\t{}",line1,line2,line3);
-            (line1,line2,line3)
-        }).collect::<Vec<(String, String, String)>>().iter()*/
-        .for_each(|chunk| {
-            let (&bag1, &bag2, &bag3) = (chunk.index(0), chunk.index(1), chunk.index(2));
-            let mut breakout = false;
-            for c1 in bag1.chars() {
-                for c2 in bag2.chars() {
-                    if c1 == c2 {
-                        for c3 in bag3.chars() {
-                            if c1 == c3 {
-                                println!("Found Item: {} in all bags in the group", c3);
-                                badges.push(c3);
-                                breakout = true;
-                                break;
-                            }
+    groups.for_each(|chunk| {
+        let (&bag1, &bag2, &bag3) = (chunk.index(0), chunk.index(1), chunk.index(2));
+        let mut breakout = false;
+        for c1 in bag1.chars() {
+            for c2 in bag2.chars() {
+                if c1 == c2 {
+                    for c3 in bag3.chars() {
+                        if c1 == c3 {
+                            println!("Found Item: {} in all bags in the group", c3);
+                            badges.push(c3);
+                            breakout = true;
+                            break;
                         }
-                    }
-                    if breakout {
-                        break;
                     }
                 }
                 if breakout {
                     break;
                 }
             }
-        });
+            if breakout {
+                break;
+            }
+        }
+    });
     score_items(badges)
 }
