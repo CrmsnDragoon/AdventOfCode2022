@@ -15,23 +15,6 @@ fn main() {
     );
 }
 
-#[test]
-fn test_input() {
-    assert_eq!(
-        2,
-        detect_encapsulating_pairs(
-            String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
-        )
-    );
-    assert_eq!(
-        4,
-        detect_overlapping_pairs(
-            String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
-        )
-    );
-    //assert_eq!(result2, 5);
-}
-
 fn detect_encapsulating_pairs(input: String) -> i32 {
     let mut overlapping_pair = 0;
     let pairs = input
@@ -101,4 +84,29 @@ fn detect_overlapping_pairs(input: String) -> i32 {
         }
     });
     overlapping_pair
+}
+
+//This is nicer test syntax.
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part_1() {
+        assert_eq!(
+            2,
+            detect_encapsulating_pairs(
+                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
+        );
+    }
+    #[test]
+    fn test_part_2() {
+        assert_eq!(
+            4,
+            detect_overlapping_pairs(
+                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
+        );
+    }
 }
