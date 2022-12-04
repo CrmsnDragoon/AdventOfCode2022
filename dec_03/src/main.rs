@@ -14,21 +14,24 @@ fn main() {
         )
     );
 }
-
-#[test]
-fn test_input() {
-    assert_eq!(
-        157,
-        prioritize_backpack(
-            String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
-        )
-    );
-    assert_eq!(
-        70,
-        get_badges_for_authorization(
-            String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
-        )
-    );
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_input() {
+        assert_eq!(
+            157,
+            prioritize_backpack(
+                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
+        );
+        assert_eq!(
+            70,
+            get_badges_for_authorization(
+                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
+        );
+    }
 }
 
 fn prioritize_backpack(input: String) -> i32 {
