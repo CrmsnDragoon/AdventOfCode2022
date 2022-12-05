@@ -14,6 +14,21 @@
       <sourceFolder url="file://$MODULE_DIR$/dec_09/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/dec_10/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_11/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_12/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_13/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_14/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_15/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_16/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_17/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_18/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_19/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_20/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_21/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_22/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_23/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_24/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dec_25/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
