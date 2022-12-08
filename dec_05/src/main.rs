@@ -25,54 +25,57 @@ fn answer_one<'a>(input: String) -> String {
     let mut row = 0;
     let mut max_column = 0;
     part_iter.next().unwrap().lines().for_each(|line| {
+        let mut line_iter = line.chars().peekable();
         let mut column = 0;
-        println!(" Reset column: {}", column);
-        let mut previous_char: char = '/';
-        line.chars().for_each(|character| {
-            print!("character: {}", character);
-            match character {
-                'A'..='Z' => {
-                    initial_state.insert((column, row), character);
-                    print!(" New Crate: {},{} {}", column, row, character);
-                    column += 1;
-                    print!(" Increment Column: {}", column);
-                    max_column = max_column.max(column);
-                }
-                ' ' => {
-                    if previous_char == ' ' || previous_char == ']' {
-                        print!(" Ignoring space");
-                    } else {
-                        column += 1;
-                        print!(" Increment Column: {}", column);
+        loop {
+            let current = line_iter.next();
+            if current.is_some() {
+                let current_char = current.unwrap();
+                match current_char {
+                    ' ' => {
+                        let mut space_count = 0;
+                        while line_iter.peek().is_some() && line_iter.peek().unwrap() == &' ' {
+                            line_iter.next();
+                            space_count += 1;
+                            if space_count > 2 {
+                                column += 1;
+                                space_count -= 3;
+                                //eat the next character, it's a space.
+                                line_iter.next();
+                            }
+                        }
                     }
-                }
-                '[' => {
-                    print!(" Ignoring");
-                }
-                ']' => {
-                    print!(" Ignoring");
-                }
-                '\n' => {
-                    column += 1;
-                    print!(" Increment Column: {}", column);
-                    max_column = max_column.max(column);
-                    max_row = max_row.max(row);
-                    row = 0;
-                }
-                _ => {
-                    print!(" Ignoring");
+                    '[' => {
+                        initial_state.insert((column, row), line_iter.next().unwrap());
+                        line_iter.next();
+                        column += 1;
+                    }
+                    _ => {}
                 }
             }
-            previous_char = character;
-            println!();
-        });
+            if line_iter.peek().is_none() {
+                break;
+            }
+        }
         row += 1;
-        print!(" Increment row: {}", row);
+        //print!(" Increment row: {}", row);
         max_column = max_column.max(column);
         max_row = max_row.max(row);
-        println!();
+        //println!();
     });
 
+    println!(
+        "initial state crates: {}",
+        initial_state
+            .iter()
+            .map(|crate_pos| {
+                format!(
+                    "{:2},{:2}:[{}]\n",
+                    crate_pos.0 .0, crate_pos.0 .1, crate_pos.1
+                )
+            })
+            .collect::<String>()
+    );
     println!("num crates: {}", initial_state.len());
     //X, Y, How many to move
     let moves = part_iter
@@ -86,31 +89,93 @@ fn answer_one<'a>(input: String) -> String {
                     "move" => None,
                     "from" => None,
                     "to" => None,
-                    _ => Some(word.parse::<i32>().unwrap()),
+                    _ => Some(word.parse::<usize>().unwrap()),
                 })
-                .collect::<Vec<i32>>();
-            (numbers[0], numbers[1], numbers[2])
+                .collect::<Vec<usize>>();
+            println!("move {} from {} to {}", numbers[0], numbers[1], numbers[2]);
+            (numbers[0], numbers[1] - 1, numbers[2] - 1)
         })
-        .collect::<Vec<(i32, i32, i32)>>();
+        .collect::<Vec<(usize, usize, usize)>>();
 
     let mut stacks: Vec<VecDeque<char>> = vec![];
-    for _ in 0..=max_column {
+    for _ in 0..max_column {
         stacks.push(VecDeque::<char>::with_capacity(max_row + 1));
     }
     //Need to sort before insertion, I think, otherwise the stacks are going to be backwards.
-    for y in 0..=max_row {
-        for x in 0..=max_column {
-            if initial_state.get(&(x, y)).is_some() {
-                stacks[x].push_back(*initial_state.get(&(x, y)).unwrap());
-            };
+    for current_row in 0..=max_row {
+        for current_column in 0..=max_column {
+            if initial_state.get(&(current_column, current_row)).is_none() {
+                continue;
+            }
+            stacks[current_column]
+                .push_back(*initial_state.get(&(current_column, current_row)).unwrap());
+        }
+    }
+    println!("current state:");
+    for stack in 0..max_column {
+        println!(
+            "\t{:2} stack: {}",
+            stack + 1,
+            stacks[stack].iter().collect::<String>()
+        );
+    }
+
+    for (crate_count, column_src, column_dest) in moves {
+        println!(
+            "command: move {} from {} to {}",
+            crate_count,
+            column_src + 1,
+            column_dest + 1,
+        );
+
+        for crate_move_count in 0..crate_count {
+            let getter = stacks[column_src].pop_front();
+            if getter.is_some() {
+                let current = getter.unwrap();
+                println!(
+                    "command: move {} from {} to {}: Moved {}, count: {}/{}",
+                    crate_count,
+                    column_src + 1,
+                    column_dest + 1,
+                    &current,
+                    crate_move_count + 1,
+                    crate_count
+                );
+                stacks[column_dest].push_front(current);
+            } else {
+                println!(
+                    "Failed to process command {}: move {} from {} to {}, count: {}/{}",
+                    crate_move_count,
+                    crate_count,
+                    column_src + 1,
+                    column_dest + 1,
+                    crate_move_count + 1,
+                    crate_count
+                );
+                assert!(false)
+            }
+            println!("current state:");
+            for stack in 0..max_column {
+                println!(
+                    "\t{:2} stack: {}",
+                    stack + 1,
+                    stacks[stack].iter().collect::<String>()
+                );
+            }
+        }
+        println!("current state:");
+        for stack in 0..max_column {
+            println!(
+                "\t{:2} stack: {}",
+                stack + 1,
+                stacks[stack].iter().collect::<String>()
+            );
         }
     }
 
-    for _move_command in moves {}
-
     let mut answer: String = String::new();
 
-    for stack in 0..=max_column {
+    for stack in 0..max_column {
         println!("{}", stacks[stack].iter().collect::<String>());
         let top = stacks[stack].front();
         if top.is_some() {
