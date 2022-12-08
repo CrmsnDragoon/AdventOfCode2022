@@ -26,7 +26,9 @@ mod tests {
     fn test_part_1() {
         assert_eq!(
             10,
-            answer_one(String::from_utf8(include_bytes!("../input/input.txt").to_vec()).unwrap())
+            answer_one(
+                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
         );
     }
 
@@ -34,7 +36,9 @@ mod tests {
     fn test_part_2() {
         assert_eq!(
             20,
-            answer_two(String::from_utf8(include_bytes!("../input/input.txt").to_vec()).unwrap())
+            answer_two(
+                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
         );
     }
 }
