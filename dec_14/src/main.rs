@@ -9,14 +9,12 @@ fn main() {
     );
 }
 
+
 fn answer_one(_input: String) -> i32 {
     0
 }
 
-fn answer_two(input: String) -> i32 {
-    0
-}
-
+fn answer_two(_input: String) -> i32 { 0 }
 //This is nicer test syntax.
 #[cfg(test)]
 mod tests {
