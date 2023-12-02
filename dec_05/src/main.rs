@@ -198,11 +198,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part_1() {
+    fn test_part_1_test_input() {
         assert_eq!(
             "CMZ",
             answer_one(
                 String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            )
+        );
+    }
+    #[test]
+    fn test_part_1() {
+        assert_eq!(
+            "",
+            answer_one(
+                String::from_utf8(include_bytes!("../input/input.txt").to_vec()).unwrap()
             )
         );
     }

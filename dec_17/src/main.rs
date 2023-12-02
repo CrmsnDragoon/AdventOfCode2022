@@ -9,7 +9,7 @@ fn main() {
     );
 }
 
-fn answer_one(input: String) -> i32 {
+fn answer_one(_input: String) -> i32 {
     0
 }
 
