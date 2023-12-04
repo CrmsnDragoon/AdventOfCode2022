@@ -4,7 +4,6 @@ use std::collections::VecDeque;
 
 #[derive(Debug,Copy, Clone)]
 enum Crate{
-    Empty,
     Filled(char)
 }
 
@@ -72,8 +71,6 @@ fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
             }
         }
     });
-    println!("columns: {}", columns);
-    println!("initial rows: {}", rows);
     let mut stacks = vec!();
     for _ in 0..columns{
         stacks.push(VecDeque::<Crate>::new())
@@ -95,10 +92,26 @@ fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
             }
         })
     });
-    stacks.iter().for_each(|stack|{
-        println!("{:?}",stack);
-    });
     stacks
+}
+
+fn get_top_of_stacks(crates: &mut Vec<VecDeque<Crate>>) -> String {
+    let mut top_of_stack = String::new();
+    crates.iter().for_each(|crate_stack| {
+        match crate_stack.back() {
+            None => {
+                top_of_stack.push(' ');
+            }
+            Some(crate_contents) => {
+                match crate_contents {
+                    Crate::Filled(contents) => {
+                        top_of_stack.push(*contents);
+                    }
+                }
+            }
+        }
+    });
+    top_of_stack
 }
 
 fn answer_one<'a>(input: &str) -> String {
@@ -106,38 +119,14 @@ fn answer_one<'a>(input: &str) -> String {
     let bottom_half = bottom_half.trim();
     let mut crates = get_crates(top_half);
     let moves = get_moves(bottom_half);
-    format!("{:?}", moves);
 
     moves.iter().for_each(|current_move|{
         for _ in 0..current_move.count {
-            let mut current : Crate = crates[current_move.origin-1].pop_back().unwrap();
+            let current : Crate = crates[current_move.origin-1].pop_back().unwrap();
             crates[current_move.destination-1].push_back(current);
-
-            println!("Updated:");
-            crates.iter().for_each(|stack|{
-                println!("{:?}",stack);
-            });
         }
     });
-    let mut top_of_stack = String::new();
-    crates.iter().for_each(|crate_stack|{
-        match crate_stack.back(){
-            None => {
-                top_of_stack.push(' ');
-            }
-            Some(crate_contents) => {
-                match crate_contents {
-                    Crate::Empty => {
-                        top_of_stack.push(' ');
-                    }
-                    Crate::Filled(contents) => {
-                        top_of_stack.push(*contents);
-                    }
-                }
-            }
-        }
-    });
-    top_of_stack
+    get_top_of_stacks(&mut crates)
 }
 
 fn answer_two(input: &str) -> String {
@@ -145,7 +134,6 @@ fn answer_two(input: &str) -> String {
     let bottom_half = bottom_half.trim();
     let mut crates = get_crates(top_half);
     let moves = get_moves(bottom_half);
-    format!("{:?}", moves);
 
     moves.iter().for_each(|current_move|{
         let mut current : VecDeque<Crate> = Default::default();
@@ -153,30 +141,8 @@ fn answer_two(input: &str) -> String {
             current.push_front(crates[current_move.origin-1].pop_back().unwrap());
         }
         crates[current_move.destination-1].append(&mut current);
-        println!("Updated:");
-        crates.iter().for_each(|stack|{
-            println!("{:?}",stack);
-        });
     });
-    let mut top_of_stack = String::new();
-    crates.iter().for_each(|crate_stack|{
-        match crate_stack.back(){
-            None => {
-                top_of_stack.push(' ');
-            }
-            Some(crate_contents) => {
-                match crate_contents {
-                    Crate::Empty => {
-                        top_of_stack.push(' ');
-                    }
-                    Crate::Filled(contents) => {
-                        top_of_stack.push(*contents);
-                    }
-                }
-            }
-        }
-    });
-    top_of_stack
+    get_top_of_stacks(&mut crates)
 }
 
 //This is nicer test syntax.
@@ -197,7 +163,7 @@ mod tests {
     #[test]
     fn test_part_1_test_input_moves() {
         let input = include_str!("../input/test_input.txt");
-        let (top_half, bottom_half) = input.split_at(input.find("\n\n").unwrap());
+        let (_, bottom_half) = input.split_at(input.find("\n\n").unwrap());
         let bottom_half = bottom_half.trim();
         println!("{}", bottom_half);
         let moves = get_moves(bottom_half);
