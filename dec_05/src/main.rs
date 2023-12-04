@@ -140,8 +140,43 @@ fn answer_one<'a>(input: &str) -> String {
     top_of_stack
 }
 
-fn answer_two(_input: &str) -> i32 {
-    0
+fn answer_two(input: &str) -> String {
+    let (top_half, bottom_half) = input.split_at(input.find("\n\n").unwrap());
+    let bottom_half = bottom_half.trim();
+    let mut crates = get_crates(top_half);
+    let moves = get_moves(bottom_half);
+    format!("{:?}", moves);
+
+    moves.iter().for_each(|current_move|{
+        let mut current : VecDeque<Crate> = Default::default();
+        for x in 0..current_move.count {
+            current.push_front(crates[current_move.origin-1].pop_back().unwrap());
+        }
+        crates[current_move.destination-1].append(&mut current);
+        println!("Updated:");
+        crates.iter().for_each(|stack|{
+            println!("{:?}",stack);
+        });
+    });
+    let mut top_of_stack = String::new();
+    crates.iter().for_each(|crate_stack|{
+        match crate_stack.back(){
+            None => {
+                top_of_stack.push(' ');
+            }
+            Some(crate_contents) => {
+                match crate_contents {
+                    Crate::Empty => {
+                        top_of_stack.push(' ');
+                    }
+                    Crate::Filled(contents) => {
+                        top_of_stack.push(*contents);
+                    }
+                }
+            }
+        }
+    });
+    top_of_stack
 }
 
 //This is nicer test syntax.
@@ -174,7 +209,7 @@ mod tests {
     #[test]
     fn test_part_1() {
         assert_eq!(
-            "",
+            "FCVRLMVQP",
             answer_one(
                 include_str!("../input/input.txt")
             )
@@ -184,8 +219,8 @@ mod tests {
     #[test]
     fn test_part_2_test_input() {
         assert_eq!(
-            0,
-            answer_two(include_str!("../input/input.txt")
+            "MCD",
+            answer_two(include_str!("../input/test_input.txt")
             )
         );
     }
@@ -193,7 +228,7 @@ mod tests {
     #[test]
     fn test_part_2() {
         assert_eq!(
-            0,
+            "RWLWGJGFD",
             answer_two(include_str!("../input/input.txt")
             )
         );
