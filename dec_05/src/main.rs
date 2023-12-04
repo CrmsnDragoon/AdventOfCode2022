@@ -75,7 +75,7 @@ fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
     println!("columns: {}", columns);
     println!("initial rows: {}", rows);
     let mut stacks = vec!();
-    for x in 0..columns{
+    for _ in 0..columns{
         stacks.push(VecDeque::<Crate>::new())
     };
     let mut stack = input.lines().rev();
@@ -109,7 +109,7 @@ fn answer_one<'a>(input: &str) -> String {
     format!("{:?}", moves);
 
     moves.iter().for_each(|current_move|{
-        for x in 0..current_move.count {
+        for _ in 0..current_move.count {
             let mut current : Crate = crates[current_move.origin-1].pop_back().unwrap();
             crates[current_move.destination-1].push_back(current);
 
@@ -149,7 +149,7 @@ fn answer_two(input: &str) -> String {
 
     moves.iter().for_each(|current_move|{
         let mut current : VecDeque<Crate> = Default::default();
-        for x in 0..current_move.count {
+        for _ in 0..current_move.count {
             current.push_front(crates[current_move.origin-1].pop_back().unwrap());
         }
         crates[current_move.destination-1].append(&mut current);
