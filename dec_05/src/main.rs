@@ -1,194 +1,146 @@
 #![feature(exclusive_range_pattern)]
-use std::collections::HashMap;
+
 use std::collections::VecDeque;
+
+#[derive(Debug,Copy, Clone)]
+enum Crate{
+    Empty,
+    Filled(char)
+}
 
 fn main() {
     println!(
         "answer one: {}",
-        answer_one(String::from_utf8(include_bytes!("../input/input.txt").to_vec()).unwrap())
+        answer_one(include_str!("../input/input.txt"))
     );
     println!(
         "answer two: {}",
-        answer_two(String::from_utf8(include_bytes!("../input/input.txt").to_vec()).unwrap())
+        answer_two(include_str!("../input/input.txt"))
     );
 }
 
-fn answer_one<'a>(input: String) -> String {
-    let cleaned: String = input
-        .chars()
-        .filter(|&character| character != '\r')
-        .collect();
-    let input_parts = cleaned.split("\n\n").collect::<Vec<&str>>();
-    let mut part_iter = input_parts.iter();
-    let mut initial_state: HashMap<(usize, usize), char> = HashMap::<(usize, usize), char>::new();
-    let mut max_row = 0;
-    let mut row = 0;
-    let mut max_column = 0;
-    part_iter.next().unwrap().lines().for_each(|line| {
-        let mut line_iter = line.chars().peekable();
-        let mut column = 0;
-        loop {
-            let current = line_iter.next();
-            if current.is_some() {
-                let current_char = current.unwrap();
-                match current_char {
-                    ' ' => {
-                        let mut space_count = 0;
-                        while line_iter.peek().is_some() && line_iter.peek().unwrap() == &' ' {
-                            line_iter.next();
-                            space_count += 1;
-                            if space_count > 2 {
-                                column += 1;
-                                space_count -= 3;
-                                //eat the next character, it's a space.
-                                line_iter.next();
-                            }
-                        }
+#[derive(Debug, Copy, Clone)]
+struct Move {
+    count: usize,
+    origin: usize,
+    destination: usize,
+}
+
+fn get_moves(input: &str) -> Vec<Move> {
+    input.trim().lines().map(|line| {
+        let mut count: Option::<usize> = None;
+        let mut origin: Option::<usize> = None;
+        let mut destination: Option::<usize> = None;
+        line.split(' ').for_each(|seg| {
+            if seg.chars().next().unwrap().is_numeric() {
+                if seg.parse::<i32>().is_ok() {
+                    if count.is_none() {
+                        count = Some(seg.parse().unwrap());
+                    } else if origin.is_none() {
+                        origin = Some(seg.parse().unwrap());
+                    } else if destination.is_none() {
+                        destination = Some(seg.parse().unwrap());
                     }
-                    '[' => {
-                        initial_state.insert((column, row), line_iter.next().unwrap());
-                        line_iter.next();
-                        column += 1;
-                    }
-                    _ => {}
                 }
             }
-            if line_iter.peek().is_none() {
-                break;
-            }
+        });
+        Move {
+            count: count.unwrap(),
+            origin: origin.unwrap(),
+            destination: destination.unwrap(),
         }
-        row += 1;
-        //print!(" Increment row: {}", row);
-        max_column = max_column.max(column);
-        max_row = max_row.max(row);
-        //println!();
-    });
-
-    println!(
-        "initial state crates: {}",
-        initial_state
-            .iter()
-            .map(|crate_pos| {
-                format!(
-                    "{:2},{:2}:[{}]\n",
-                    crate_pos.0 .0, crate_pos.0 .1, crate_pos.1
-                )
-            })
-            .collect::<String>()
-    );
-    println!("num crates: {}", initial_state.len());
-    //X, Y, How many to move
-    let moves = part_iter
-        .next()
-        .unwrap()
-        .lines()
-        .map(|line| {
-            let numbers = line
-                .split(' ')
-                .filter_map(|word| match word {
-                    "move" => None,
-                    "from" => None,
-                    "to" => None,
-                    _ => Some(word.parse::<usize>().unwrap()),
-                })
-                .collect::<Vec<usize>>();
-            println!("move {} from {} to {}", numbers[0], numbers[1], numbers[2]);
-            (numbers[0], numbers[1] - 1, numbers[2] - 1)
-        })
-        .collect::<Vec<(usize, usize, usize)>>();
-
-    let mut stacks: Vec<VecDeque<char>> = vec![];
-    for _ in 0..max_column {
-        stacks.push(VecDeque::<char>::with_capacity(max_row + 1));
-    }
-    //Need to sort before insertion, I think, otherwise the stacks are going to be backwards.
-    for current_row in 0..=max_row {
-        for current_column in 0..=max_column {
-            if initial_state.get(&(current_column, current_row)).is_none() {
-                continue;
-            }
-            stacks[current_column]
-                .push_back(*initial_state.get(&(current_column, current_row)).unwrap());
-        }
-    }
-    println!("current state:");
-    for stack in 0..max_column {
-        println!(
-            "\t{:2} stack: {}",
-            stack + 1,
-            stacks[stack].iter().collect::<String>()
-        );
-    }
-
-    for (crate_count, column_src, column_dest) in moves {
-        println!(
-            "command: move {} from {} to {}",
-            crate_count,
-            column_src + 1,
-            column_dest + 1,
-        );
-
-        for crate_move_count in 0..crate_count {
-            let getter = stacks[column_src].pop_front();
-            if getter.is_some() {
-                let current = getter.unwrap();
-                println!(
-                    "command: move {} from {} to {}: Moved {}, count: {}/{}",
-                    crate_count,
-                    column_src + 1,
-                    column_dest + 1,
-                    &current,
-                    crate_move_count + 1,
-                    crate_count
-                );
-                stacks[column_dest].push_front(current);
-            } else {
-                println!(
-                    "Failed to process command {}: move {} from {} to {}, count: {}/{}",
-                    crate_move_count,
-                    crate_count,
-                    column_src + 1,
-                    column_dest + 1,
-                    crate_move_count + 1,
-                    crate_count
-                );
-                assert!(false)
-            }
-            println!("current state:");
-            for stack in 0..max_column {
-                println!(
-                    "\t{:2} stack: {}",
-                    stack + 1,
-                    stacks[stack].iter().collect::<String>()
-                );
-            }
-        }
-        println!("current state:");
-        for stack in 0..max_column {
-            println!(
-                "\t{:2} stack: {}",
-                stack + 1,
-                stacks[stack].iter().collect::<String>()
-            );
-        }
-    }
-
-    let mut answer: String = String::new();
-
-    for stack in 0..max_column {
-        println!("{}", stacks[stack].iter().collect::<String>());
-        let top = stacks[stack].front();
-        if top.is_some() {
-            let value = *top.unwrap();
-            println!("{} top: {}", stack, &value);
-            answer.push(value);
-        }
-    }
-
-    answer
+    }).collect()
 }
 
-fn answer_two(_input: String) -> i32 {
+fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
+    let mut longest_line = 0;
+    input.lines().for_each(|line| {
+        if line.len() > longest_line {
+            longest_line = line.len();
+        }
+    });
+    let mut columns = 0;
+    let mut rows = 0;
+    input.lines().enumerate().for_each(|(line_num, mut line)|{
+        line = line.trim();
+        let initial_char = line.chars().next().unwrap();
+        match initial_char{
+            '['=>{}
+            _=>{
+                columns = line.split("  ").last().unwrap().trim().parse().unwrap();
+                rows = line_num;
+            }
+        }
+    });
+    println!("columns: {}", columns);
+    println!("initial rows: {}", rows);
+    let mut stacks = vec!();
+    for x in 0..columns{
+        stacks.push(VecDeque::<Crate>::new())
+    };
+    let mut stack = input.lines().rev();
+    stack.next();
+    stack.for_each(|line| {
+        line.chars().enumerate().for_each(|(index, character)| {
+            match character {
+                ' ' => {}
+                ']' => {}
+                '\n' => {}
+                '[' => {}
+                _ => {
+                    let column = index/4;
+                    let new_crate = Crate::Filled(character);
+                    stacks[column].push_back(new_crate);
+                }
+            }
+        })
+    });
+    stacks.iter().for_each(|stack|{
+        println!("{:?}",stack);
+    });
+    stacks
+}
+
+fn answer_one<'a>(input: &str) -> String {
+    let (top_half, bottom_half) = input.split_at(input.find("\n\n").unwrap());
+    let bottom_half = bottom_half.trim();
+    let mut crates = get_crates(top_half);
+    let moves = get_moves(bottom_half);
+    format!("{:?}", moves);
+
+    moves.iter().for_each(|current_move|{
+        for x in 0..current_move.count {
+            let mut current : Crate = crates[current_move.origin-1].pop_back().unwrap();
+            crates[current_move.destination-1].push_back(current);
+
+            println!("Updated:");
+            crates.iter().for_each(|stack|{
+                println!("{:?}",stack);
+            });
+        }
+    });
+    let mut top_of_stack = String::new();
+    crates.iter().for_each(|crate_stack|{
+        match crate_stack.back(){
+            None => {
+                top_of_stack.push(' ');
+            }
+            Some(crate_contents) => {
+                match crate_contents {
+                    Crate::Empty => {
+                        top_of_stack.push(' ');
+                    }
+                    Crate::Filled(contents) => {
+                        top_of_stack.push(*contents);
+                    }
+                }
+            }
+        }
+    });
+    top_of_stack
+}
+
+fn answer_two(_input: &str) -> i32 {
     0
 }
 
@@ -202,16 +154,38 @@ mod tests {
         assert_eq!(
             "CMZ",
             answer_one(
-                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+                include_str!("../input/test_input.txt")
             )
         );
     }
+
+    #[test]
+    fn test_part_1_test_input_moves() {
+        let input = include_str!("../input/test_input.txt");
+        let (top_half, bottom_half) = input.split_at(input.find("\n\n").unwrap());
+        let bottom_half = bottom_half.trim();
+        println!("{}", bottom_half);
+        let moves = get_moves(bottom_half);
+        assert_eq!(moves.len(), 4);
+        assert_eq!(moves.len(), bottom_half.lines().count());
+        println!("{:?}", moves);
+    }
+
     #[test]
     fn test_part_1() {
         assert_eq!(
             "",
             answer_one(
-                String::from_utf8(include_bytes!("../input/input.txt").to_vec()).unwrap()
+                include_str!("../input/input.txt")
+            )
+        );
+    }
+
+    #[test]
+    fn test_part_2_test_input() {
+        assert_eq!(
+            0,
+            answer_two(include_str!("../input/input.txt")
             )
         );
     }
@@ -219,9 +193,8 @@ mod tests {
     #[test]
     fn test_part_2() {
         assert_eq!(
-            20,
-            answer_two(
-                String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap()
+            0,
+            answer_two(include_str!("../input/input.txt")
             )
         );
     }
