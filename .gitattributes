@@ -1,0 +1,6 @@
+*.txt eol=lf
+*.rs eol=lf
+*.cargo eol=lf
+*.toml eol=lf
+*.iml eol=lf
+justfile eol=lf
