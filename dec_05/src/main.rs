@@ -1,5 +1,3 @@
-#![feature(exclusive_range_pattern)]
-
 use std::collections::VecDeque;
 
 #[derive(Debug,Copy, Clone)]
