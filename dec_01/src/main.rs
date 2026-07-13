@@ -38,7 +38,7 @@ fn calc_elf_kcal(input_as_string: String) -> (i32, i32) {
     elves.sort();
     elves.reverse();
 
-    let answer1: i32 = elves.first().unwrap().clone();
+    let answer1: i32 = *elves.first().unwrap();
 
     let top_3_slice = &elves[0..3];
     let answer2: i32 = top_3_slice.iter().sum::<i32>();

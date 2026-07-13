@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 
-#[derive(Debug,Copy, Clone)]
-enum Crate{
-    Filled(char)
+#[derive(Debug, Copy, Clone)]
+enum Crate {
+    Filled(char),
 }
 
 fn main() {
@@ -24,13 +24,15 @@ struct Move {
 }
 
 fn get_moves(input: &str) -> Vec<Move> {
-    input.trim().lines().map(|line| {
-        let mut count: Option::<usize> = None;
-        let mut origin: Option::<usize> = None;
-        let mut destination: Option::<usize> = None;
-        line.split(' ').for_each(|seg| {
-            if seg.chars().next().unwrap().is_numeric() {
-                if seg.parse::<i32>().is_ok() {
+    input
+        .trim()
+        .lines()
+        .map(|line| {
+            let mut count: Option<usize> = None;
+            let mut origin: Option<usize> = None;
+            let mut destination: Option<usize> = None;
+            line.split(' ').for_each(|seg| {
+                if seg.chars().next().unwrap().is_numeric() && seg.parse::<i32>().is_ok() {
                     if count.is_none() {
                         count = Some(seg.parse().unwrap());
                     } else if origin.is_none() {
@@ -39,14 +41,14 @@ fn get_moves(input: &str) -> Vec<Move> {
                         destination = Some(seg.parse().unwrap());
                     }
                 }
+            });
+            Move {
+                count: count.unwrap(),
+                origin: origin.unwrap(),
+                destination: destination.unwrap(),
             }
-        });
-        Move {
-            count: count.unwrap(),
-            origin: origin.unwrap(),
-            destination: destination.unwrap(),
-        }
-    }).collect()
+        })
+        .collect()
 }
 
 fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
@@ -58,57 +60,55 @@ fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
     });
     let mut columns = 0;
     let mut rows = 0;
-    input.lines().enumerate().for_each(|(line_num, mut line)|{
+    input.lines().enumerate().for_each(|(line_num, mut line)| {
         line = line.trim();
         let initial_char = line.chars().next().unwrap();
-        match initial_char{
-            '['=>{}
-            _=>{
+        match initial_char {
+            '[' => {}
+            _ => {
                 columns = line.split("  ").last().unwrap().trim().parse().unwrap();
                 rows = line_num;
             }
         }
     });
-    let mut stacks = vec!();
-    for _ in 0..columns{
+    let mut stacks = vec![];
+    for _ in 0..columns {
         stacks.push(VecDeque::<Crate>::new())
-    };
+    }
     let mut stack = input.lines().rev();
     stack.next();
     stack.for_each(|line| {
-        line.chars().enumerate().for_each(|(index, character)| {
-            match character {
+        line.chars()
+            .enumerate()
+            .for_each(|(index, character)| match character {
                 ' ' => {}
                 ']' => {}
                 '\n' => {}
                 '[' => {}
                 _ => {
-                    let column = index/4;
+                    let column = index / 4;
                     let new_crate = Crate::Filled(character);
                     stacks[column].push_back(new_crate);
                 }
-            }
-        })
+            })
     });
     stacks
 }
 
 fn get_top_of_stacks(crates: &mut Vec<VecDeque<Crate>>) -> String {
     let mut top_of_stack = String::new();
-    crates.iter().for_each(|crate_stack| {
-        match crate_stack.back() {
+    crates
+        .iter()
+        .for_each(|crate_stack| match crate_stack.back() {
             None => {
                 top_of_stack.push(' ');
             }
-            Some(crate_contents) => {
-                match crate_contents {
-                    Crate::Filled(contents) => {
-                        top_of_stack.push(*contents);
-                    }
+            Some(crate_contents) => match crate_contents {
+                Crate::Filled(contents) => {
+                    top_of_stack.push(*contents);
                 }
-            }
-        }
-    });
+            },
+        });
     top_of_stack
 }
 
@@ -118,10 +118,10 @@ fn answer_one<'a>(input: &str) -> String {
     let mut crates = get_crates(top_half);
     let moves = get_moves(bottom_half);
 
-    moves.iter().for_each(|current_move|{
+    moves.iter().for_each(|current_move| {
         for _ in 0..current_move.count {
-            let current : Crate = crates[current_move.origin-1].pop_back().unwrap();
-            crates[current_move.destination-1].push_back(current);
+            let current: Crate = crates[current_move.origin - 1].pop_back().unwrap();
+            crates[current_move.destination - 1].push_back(current);
         }
     });
     get_top_of_stacks(&mut crates)
@@ -133,12 +133,12 @@ fn answer_two(input: &str) -> String {
     let mut crates = get_crates(top_half);
     let moves = get_moves(bottom_half);
 
-    moves.iter().for_each(|current_move|{
-        let mut current : VecDeque<Crate> = Default::default();
+    moves.iter().for_each(|current_move| {
+        let mut current: VecDeque<Crate> = Default::default();
         for _ in 0..current_move.count {
-            current.push_front(crates[current_move.origin-1].pop_back().unwrap());
+            current.push_front(crates[current_move.origin - 1].pop_back().unwrap());
         }
-        crates[current_move.destination-1].append(&mut current);
+        crates[current_move.destination - 1].append(&mut current);
     });
     get_top_of_stacks(&mut crates)
 }
@@ -150,12 +150,7 @@ mod tests {
 
     #[test]
     fn test_part_1_test_input() {
-        assert_eq!(
-            "CMZ",
-            answer_one(
-                include_str!("../input/test_input.txt")
-            )
-        );
+        assert_eq!("CMZ", answer_one(include_str!("../input/test_input.txt")));
     }
 
     #[test]
@@ -172,29 +167,16 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(
-            "FCVRLMVQP",
-            answer_one(
-                include_str!("../input/input.txt")
-            )
-        );
+        assert_eq!("FCVRLMVQP", answer_one(include_str!("../input/input.txt")));
     }
 
     #[test]
     fn test_part_2_test_input() {
-        assert_eq!(
-            "MCD",
-            answer_two(include_str!("../input/test_input.txt")
-            )
-        );
+        assert_eq!("MCD", answer_two(include_str!("../input/test_input.txt")));
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(
-            "RWLWGJGFD",
-            answer_two(include_str!("../input/input.txt")
-            )
-        );
+        assert_eq!("RWLWGJGFD", answer_two(include_str!("../input/input.txt")));
     }
 }

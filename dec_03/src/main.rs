@@ -75,13 +75,12 @@ fn score_items(input: Vec<char>) -> i32 {
     input
         .iter()
         .map(|&item| {
-            let value;
             let as_u8: u8 = item as u8;
-            if as_u8 > '`' as u8 {
-                value = as_u8 as i32 - 96;
+            let value = if as_u8 > b'`' {
+                as_u8 as i32 - 96
             } else {
-                value = as_u8 as i32 - 64 + 26;
-            }
+                as_u8 as i32 - 64 + 26
+            };
             println!("Scored item: {}={}", item, value);
             value
         })
@@ -91,7 +90,7 @@ fn score_items(input: Vec<char>) -> i32 {
 fn get_badges_for_authorization(input: String) -> i32 {
     let mut badges: Vec<char> = vec![];
     let groups = input.lines().collect::<Vec<&str>>();
-    let groups = groups.chunks(3).into_iter();
+    let groups = groups.chunks(3);
     println!("Groups: {}", groups.len());
     groups.for_each(|chunk| {
         let (&bag1, &bag2, &bag3) = (chunk.index(0), chunk.index(1), chunk.index(2));

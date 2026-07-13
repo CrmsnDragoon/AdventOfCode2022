@@ -96,7 +96,7 @@ fn roshambo_round(line: String) -> i32 {
             println!("ERROR!")
         }
     }
-    println!("current_score: {}", &current_score);
+    println!("current_score: {}", current_score);
     current_score
 }
 fn roshambo_strat_round(line: String) -> i32 {
@@ -172,7 +172,7 @@ fn roshambo_strat_round(line: String) -> i32 {
             println!("ERROR!")
         }
     }
-    println!("current_score: {}", &current_score);
+    println!("current_score: {}", current_score);
     current_score
 }
 
