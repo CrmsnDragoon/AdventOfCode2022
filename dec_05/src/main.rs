@@ -95,7 +95,7 @@ fn get_crates(input: &str) -> Vec<VecDeque<Crate>> {
     stacks
 }
 
-fn get_top_of_stacks(crates: &mut Vec<VecDeque<Crate>>) -> String {
+fn get_top_of_stacks(crates: &mut [VecDeque<Crate>]) -> String {
     let mut top_of_stack = String::new();
     crates
         .iter()
@@ -112,7 +112,7 @@ fn get_top_of_stacks(crates: &mut Vec<VecDeque<Crate>>) -> String {
     top_of_stack
 }
 
-fn answer_one<'a>(input: &str) -> String {
+fn answer_one(input: &str) -> String {
     let (top_half, bottom_half) = input.split_at(input.find("\n\n").unwrap());
     let bottom_half = bottom_half.trim();
     let mut crates = get_crates(top_half);

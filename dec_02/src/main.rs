@@ -9,33 +9,6 @@ fn main() {
     println!("answer two: {}", result2);
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test_input() {
-        let input = String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap();
-        let round_input = input.clone();
-        let mut iter = round_input.lines();
-        assert_eq!(roshambo_round(iter.next().unwrap().to_string()), 8);
-        assert_eq!(roshambo_round(iter.next().unwrap().to_string()), 1);
-        assert_eq!(roshambo_round(iter.next().unwrap().to_string()), 6);
-
-        let result1 = roshambo_all_rounds(input.clone());
-        assert_eq!(result1, 15);
-        let round_input = input.clone();
-        let mut iter = round_input.lines();
-        assert_eq!(roshambo_strat_round(iter.next().unwrap().to_string()), 4);
-        assert_eq!(roshambo_strat_round(iter.next().unwrap().to_string()), 1);
-        assert_eq!(roshambo_strat_round(iter.next().unwrap().to_string()), 7);
-        assert_eq!(roshambo_strat_round("A X".to_string()), 0 + 3);
-        assert_eq!(roshambo_strat_round("A Y".to_string()), 3 + 1);
-        assert_eq!(roshambo_strat_round("A Z".to_string()), 6 + 2);
-        let result2 = roshambo_all_rounds_strat_guide(input);
-        assert_eq!(result2, 12);
-    }
-}
-
 fn roshambo_all_rounds(input: String) -> i32 {
     input
         .lines()
@@ -181,4 +154,30 @@ fn roshambo_all_rounds_strat_guide(input: String) -> i32 {
         .lines()
         .map(|line| roshambo_strat_round(line.to_string()))
         .sum::<i32>()
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_input() {
+        let input = String::from_utf8(include_bytes!("../input/test_input.txt").to_vec()).unwrap();
+        let round_input = input.clone();
+        let mut iter = round_input.lines();
+        assert_eq!(roshambo_round(iter.next().unwrap().to_string()), 8);
+        assert_eq!(roshambo_round(iter.next().unwrap().to_string()), 1);
+        assert_eq!(roshambo_round(iter.next().unwrap().to_string()), 6);
+
+        let result1 = roshambo_all_rounds(input.clone());
+        assert_eq!(result1, 15);
+        let round_input = input.clone();
+        let mut iter = round_input.lines();
+        assert_eq!(roshambo_strat_round(iter.next().unwrap().to_string()), 4);
+        assert_eq!(roshambo_strat_round(iter.next().unwrap().to_string()), 1);
+        assert_eq!(roshambo_strat_round(iter.next().unwrap().to_string()), 7);
+        assert_eq!(roshambo_strat_round("A X".to_string()), 3);
+        assert_eq!(roshambo_strat_round("A Y".to_string()), 3 + 1);
+        assert_eq!(roshambo_strat_round("A Z".to_string()), 6 + 2);
+        let result2 = roshambo_all_rounds_strat_guide(input);
+        assert_eq!(result2, 12);
+    }
 }

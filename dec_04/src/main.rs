@@ -40,9 +40,7 @@ fn detect_encapsulating_pairs(input: String) -> i32 {
     println!("total pairs: {}", pairs.len());
     pairs.iter().for_each(|(elf1, elf2)| {
         //Assignment encapsulation checks
-        if elf1.0 <= elf2.0 && elf1.1 >= elf2.1 {
-            overlapping_pair += 1;
-        } else if elf1.0 >= elf2.0 && elf1.1 <= elf2.1 {
+        if (elf1.0 <= elf2.0 && elf1.1 >= elf2.1) || (elf1.0 >= elf2.0 && elf1.1 <= elf2.1) {
             overlapping_pair += 1;
         }
     });
@@ -73,12 +71,8 @@ fn detect_overlapping_pairs(input: String) -> i32 {
     println!("total pairs: {}", pairs.len());
     pairs.iter().for_each(|(elf1, elf2)| {
         //Apparently I should have used ranges instead, but while it's harder to parse it's probably faster? maybe.
-        //Is Elf 2 inside of Elf 1's assignment
-        if elf1.0 >= elf2.0 && elf1.0 <= elf2.1 {
-            overlapping_pair += 1;
-        }
-        //Does elf 2 overlap
-        else if elf2.0 >= elf1.0 && elf2.0 <= elf1.1 {
+        //Is Elf 2 inside of Elf 1's assignment, or does elf 2 overlap
+        if (elf1.0 >= elf2.0 && elf1.0 <= elf2.1) || (elf2.0 >= elf1.0 && elf2.0 <= elf1.1) {
             overlapping_pair += 1;
         }
     });
